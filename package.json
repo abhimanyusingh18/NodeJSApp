@@ -1,6 +1,6 @@
 {
   "name": "@abhimanyuu18/node-ci-cd",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "lint": "echo 'Linting code...' && exit 0",
     "test": "node tests/test.js",
