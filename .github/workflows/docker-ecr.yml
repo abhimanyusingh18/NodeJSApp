@@ -54,7 +54,7 @@ jobs:
 
       - name: Stop existing port forwarding
         run:
-          docker stop $CONTAINER_ID
+          docker stop $(docker ps -a --latest --format "{{.ID}}")
       
       - name: Run Docker container locally
         run: |
