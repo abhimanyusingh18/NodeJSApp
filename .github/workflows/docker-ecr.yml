@@ -50,7 +50,7 @@ jobs:
 
       - name: Output ECR URL
         run: |
-          echo "Image pushed: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}"
+          echo "Image pushed: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest"
 
       - name: Stop existing port forwarding
         run:
