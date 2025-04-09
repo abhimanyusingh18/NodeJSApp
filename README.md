@@ -18,4 +18,4 @@ npm start        # Start the local app
 
 ## CI/CD Workflow
 
-Located in `.github/workflows/ci.yml`, triggered on push or pull request to `main`.
+Located in `.github/workflows/NodeJS-Actions.yml`, triggered on push or pull request to `main`.
