@@ -52,10 +52,6 @@ jobs:
         run: |
           echo "Image pushed: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}"
 
-      - name: Pull latest Docker image from ECR
-        run: |
-          docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
-
       - name: Run Docker container locally
         run: |
           docker run -d -p 3000:3000 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
