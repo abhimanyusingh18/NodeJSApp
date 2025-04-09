@@ -1,5 +1,5 @@
 {
-  "name": "node-ci-cd",
+  "name": "@abhimanyuu18/node-ci-cd",
   "version": "1.0.0",
   "scripts": {
     "lint": "echo 'Linting code...' && exit 0",
