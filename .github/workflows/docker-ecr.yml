@@ -54,7 +54,7 @@ jobs:
     
       - name: Pull image from ECR
         run: |
-          docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$TIMESTAMP
+          docker pull ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ steps.timestamp.outputs.timestamp }}
 
       - name: Run Docker container locally
         run: |
