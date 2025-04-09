@@ -13,7 +13,7 @@ jobs:
       IMAGE_NAME: node-ci-cd-app
       AWS_REGION: ap-south-1
       AWS_ACCOUNT_ID: 368721899659
-      CONTAINER_ID: (docker ps -a --latest --format "{{.ID}})" 
+      CONTAINER_ID: (docker ps --latest --format "{{.ID}})" 
 
 
     steps:
