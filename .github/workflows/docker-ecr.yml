@@ -51,8 +51,12 @@ jobs:
       - name: Output ECR URL
         run: |
           echo "Image pushed: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}"
+    
+      - name: Pull image from ECR
+        run: |
+          docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$TIMESTAMP
 
       - name: Run Docker container locally
         run: |
-          docker run -d -p 3000:3000 $IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
+          docker run -d -p 3000:3000 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$TIMESTAMP
           echo "App is now running locally on http://localhost:3000"
