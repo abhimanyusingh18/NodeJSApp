@@ -1,0 +1,11 @@
+{
+  "name": "node-ci-cd",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "echo 'Linting code...' && exit 0",
+    "test": "node tests/test.js",
+    "start": "node app/index.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
