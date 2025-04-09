@@ -34,7 +34,7 @@ jobs:
           aws ecr get-login-password --region $AWS_REGION | \
           docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      - name: Build Docker image (no-cache)
+      - name: Build Docker image
         run: |
           docker build -t $IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }} .
 
@@ -54,8 +54,13 @@ jobs:
 
       - name: Stop existing port forwarding
         run:
-          docker stop $(docker ps -a --latest --format "{{.ID}}")
-      
+          CONTAINER_ID=$(docker ps -q --latest)
+          if [ -n "$CONTAINER_ID" ]; then
+            docker stop $CONTAINER_ID
+          else
+            echo "No running container to stop."
+          fi
+
       - name: Run Docker container locally
         run: |
           docker run -d -p 3000:3000 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
