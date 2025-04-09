@@ -3,7 +3,7 @@ const http = require('http');
 
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
-  res.end('Hello from Node.js CI/CD app!');
+  res.end('This is a CI/CD deployment by Abhimanyu using GitHub actions!');
 });
 
 server.listen(3000, () => {
