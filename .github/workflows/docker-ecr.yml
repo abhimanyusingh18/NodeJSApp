@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t $IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }} .
+          docker build --no-cache -t $IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }} .
 
       - name: Tag Docker image
         run: |
