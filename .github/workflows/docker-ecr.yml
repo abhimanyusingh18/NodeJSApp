@@ -62,6 +62,6 @@ jobs:
               docker rm $CONTAINER_ID
             fi
 
-            docker run -d -p 80:3000 ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
+            docker run -d -p 3000:3000 ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
 
             echo "✅ Deployed successfully to EC2: http://${{ secrets.EC2_HOST }}"
