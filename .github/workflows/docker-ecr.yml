@@ -56,10 +56,12 @@ jobs:
 
             docker pull ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
 
-            CONTAINER_ID=$(docker ps -q --latest)
+            CONTAINER_ID=$(docker ps -q --latest | awk '{ print$1 }')
             if [ -n "$CONTAINER_ID" ]; then
               docker stop $CONTAINER_ID
               docker rm $CONTAINER_ID
+            else
+              echo "No runnig containers found!"
             fi
 
             docker run -d -p 3000:3000 ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
