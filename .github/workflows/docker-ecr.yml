@@ -13,6 +13,8 @@ deploy:
       IMAGE_NAME: node-ci-cd-app
       AWS_REGION: ap-south-1
       AWS_ACCOUNT_ID: 368721899659
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 
     steps:
       - name: Checkout repo
@@ -35,8 +37,6 @@ deploy:
           args: >
             -Dsonar.host.url=http://${{secrets.EC2_HOST}}:9000
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
       - name: Login to ECR
