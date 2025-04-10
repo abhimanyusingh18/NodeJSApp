@@ -56,7 +56,7 @@ jobs:
 
             docker pull ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
 
-            CONTAINER_ID=$(docker ps -q --filter ancestor=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest)
+            CONTAINER_ID=$(docker ps -q --latest)
             if [ -n "$CONTAINER_ID" ]; then
               docker stop $CONTAINER_ID
               docker rm $CONTAINER_ID
