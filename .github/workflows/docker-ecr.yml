@@ -1,4 +1,4 @@
-name: Build & Push Docker to ECR
+name: Build, Push to ECR & Deploy to EC2
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  deploy:
     runs-on: ubuntu-latest
 
     env:
@@ -25,16 +25,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Stop existing port forwarding
-        run: |
-          CONTAINER_ID=$(docker ps -q --latest)
-          if [ -n "$CONTAINER_ID" ]; then
-            docker stop $CONTAINER_ID
-          else
-            echo "No running container to stop."
-          fi
-
-
       - name: Set timestamp
         id: timestamp
         run: echo "timestamp=$(date +%Y%m%d%H%M%S)" >> "$GITHUB_OUTPUT"
@@ -44,25 +34,34 @@ jobs:
           aws ecr get-login-password --region $AWS_REGION | \
           docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      - name: Build Docker image
+      - name: Build & Tag Docker image
         run: |
-          docker build -t $IMAGE_NAME:${{ secrets.AWS_ACCESS_KEY_ID }} .
-
-      - name: Tag Docker image
-        run: |
-          docker tag $IMAGE_NAME:${{ secrets.AWS_ACCESS_KEY_ID }} $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
-          docker tag $IMAGE_NAME:${{ secrets.AWS_ACCESS_KEY_ID }} $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
+          docker build -t $IMAGE_NAME:latest .
+          docker tag $IMAGE_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
+          docker tag $IMAGE_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
 
       - name: Push Docker image to ECR
         run: |
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
-          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
 
-      - name: Output ECR URL
-        run: |
-          echo "Image pushed: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}"
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker login --username AWS --password $(aws ecr get-login-password --region ${{ env.AWS_REGION }}) ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
 
-      - name: Run Docker container locally
-        run: |
-          docker run -d -p 3000:3000 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
-          echo "App is now running locally at http://localhost:3000"
+            docker pull ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
+
+            CONTAINER_ID=$(docker ps -q --filter ancestor=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest)
+            if [ -n "$CONTAINER_ID" ]; then
+              docker stop $CONTAINER_ID
+              docker rm $CONTAINER_ID
+            fi
+
+            docker run -d -p 80:3000 ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:latest
+
+            echo "✅ Deployed successfully to EC2: http://${{ secrets.EC2_HOST }}"
