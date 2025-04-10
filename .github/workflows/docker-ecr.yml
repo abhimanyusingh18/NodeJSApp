@@ -50,8 +50,8 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          docker tag $IMAGE_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
-          docker tag $IMAGE_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
+          docker tag $IMAGE_NAME:${{ secrets.AWS_ACCESS_KEY_ID }} $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
+          docker tag $IMAGE_NAME:${{ secrets.AWS_ACCESS_KEY_ID }} $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
 
       - name: Push Docker image to ECR
         run: |
