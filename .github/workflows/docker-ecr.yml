@@ -64,6 +64,6 @@ jobs:
 
       - name: Run Docker container locally
         run: |
-          docker run -d -p 3000:3000 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:${{ steps.timestamp.outputs.timestamp }}
+          docker run -d -p 3000:3000 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
           echo "App is now running locally at http://localhost:3000"
 
