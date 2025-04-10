@@ -46,7 +46,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t $IMAGE_NAME:latest .
+          docker build -t $IMAGE_NAME:${{ secrets.AWS_ACCESS_KEY_ID }} .
 
       - name: Tag Docker image
         run: |
